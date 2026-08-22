@@ -1,0 +1,280 @@
+{
+  "name": "CoderCup Champions-Turnos",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c35d06c8-9dca-4444-b376-273702dfc430",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5f24b926-8e4e-4cd3-9183-d8fd346df344",
+              "name": "telefono",
+              "value": "5491100000000",
+              "type": "string"
+            },
+            {
+              "id": "b4f8c8fd-182d-4381-868b-f34c2a1e0750",
+              "name": "nombre",
+              "value": "Alan",
+              "type": "string"
+            },
+            {
+              "id": "7612a785-63ca-47a8-8ebd-c12d7c222ca7",
+              "name": "texto",
+              "value": "Si, confirmo",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "e6516551-70b5-4afa-81d8-ee664c76b624",
+      "name": "Normalizar"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.texto }}",
+        "options": {
+          "systemMessage": "=Sos el asistente de reservas del complejo de canchas \"CoderCup Champions\". Atendes clientes por WhatsApp.\n\nCONTEXTO\n- Ahora es {{ $now.setZone('America/Argentina/Buenos_Aires').toFormat(\"cccc dd/MM/yyyy HH:mm\") }}. Usalo para resolver \"hoy\", \"manana\", \"el sabado\", \"el finde\".\n- El telefono del cliente es {{ $json.telefono }}. Ya lo tenes, no lo preguntes.\n- En WhatsApp figura como {{ $json.nombre }}, pero puede estar reservando para otro: confirma a nombre de quien va el turno.\n- El complejo abre de 09:00 a 23:00 y todos los turnos duran 1 hora.\n\nQUE OFRECES\n- Hay canchas de futbol 5 y de futbol 7, con precios distintos.\n- ver_disponibilidad te devuelve, para una fecha, cada turno libre con su cancha, deporte, hora y precio.\n- Podes filtrar por tipo pasandole p_deporte con \"futbol 5\" o \"futbol 7\".\n\nCOMO HABLAS\n- Espanol rioplatense, cordial y breve. Es WhatsApp: mensajes cortos, sin parrafos largos.\n- Maximo 5 horarios por mensaje. Si hay mas, decilo y ofrece mostrar el resto.\n- Cuando listes horarios, aclara de que tipo de futbol es cada cancha.\n\nQUE NECESITAS PARA RESERVAR\nAntes de llamar a crear_reserva tenes que tener los cuatro datos:\n1. Tipo de futbol (5 o 7)\n2. Fecha\n3. Hora\n4. Nombre de quien reserva\n\nSi falta alguno, preguntalo. Preguntá de a una cosa por vez, no tires una lista de preguntas.\n\nExcepciones, para no hacerlo pesado:\n- Si el cliente ya dijo el tipo, no lo vuelvas a preguntar. Deducilo si es obvio: 10 jugadores es futbol 5, 14 es futbol 7.\n- Si para ese horario queda una sola cancha libre, ofrecesela directamente en vez de preguntar el tipo.\n\nREGLAS QUE NO SE ROMPEN\n- NUNCA inventes disponibilidad, precios ni tipos de cancha. Todo sale de ver_disponibilidad.\n- Volve a consultar ver_disponibilidad cada vez que el cliente cambie de fecha, de horario o de tipo de futbol. No contestes de memoria.\n- Antes de llamar a crear_reserva repetile cancha, tipo de futbol, dia, hora y precio, y espera que confirme.\n- crear_reserva necesita el cancha_id exacto que devolvio ver_disponibilidad. No lo adivines.\n- Si el horario que pide esta ocupado, decilo y ofrece los dos o tres mas cercanos del mismo tipo de futbol.\n- Si crear_reserva devuelve error, ese turno se acaba de ocupar: avisale, volve a consultar disponibilidad y ofrecele otro. No reintentes lo mismo.\n- Si te preguntan algo que no sea sobre turnos, responde amablemente que solo manejas reservas de canchas.",
+          "maxIterations": 5
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "6d6f4b46-9d07-4289-8291-049710de28e1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.6-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        208,
+        304
+      ],
+      "id": "94adff6e-967a-4b10-87ec-a71c7534369a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OZ55JdTNweQK4f39",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Normalizar').item.json.telefono }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        384,
+        304
+      ],
+      "id": "78293588-aa09-49fb-b1ad-bba1bff6d6e4",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Devuelve los turnos LIBRES de una fecha, con cancha, deporte (futbol 5 o futbol 7), hora y precio. Usala siempre antes de ofrecer horarios al cliente. p_fecha va en formato YYYY-MM-DD. p_deporte es opcional y sirve para filtrar por tipo: mandale \"futbol 5\" o \"futbol 7\", o dejalo vacio para ver todo.",
+        "method": "POST",
+        "url": "https://ktqwuwuycuthwxlqlisp.supabase.co/rest/v1/rpc/disponibilidad",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p_fecha",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "p_deporte",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        544,
+        304
+      ],
+      "id": "4d589017-bec0-403c-b1cc-773f2194ee26",
+      "name": "ver_disponibilidad",
+      "credentials": {
+        "supabaseApi": {
+          "id": "92BryzmZpeNbFhN9",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Crea una reserva confirmada. Llamala SOLO despues de que el cliente confirmo cancha, dia y hora. inicio y fin van en formato ISO con zona horaria -03:00, por ejemplo 2026-08-25T20:00:00-03:00. El fin es una hora despues del inicio.",
+        "method": "POST",
+        "url": "https://ktqwuwuycuthwxlqlisp.supabase.co/rest/v1/reservas",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "cancha_id",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            },
+            {
+              "name": "inicio",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+            },
+            {
+              "name": "fin",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+            },
+            {
+              "name": "cliente_nombre",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', ``, 'string') }}"
+            },
+            {
+              "name": "cliente_telefono",
+              "value": "={{ $('Normalizar').item.json.telefono }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        704,
+        304
+      ],
+      "id": "c0189e8d-d3da-456c-b0a2-75312b22c2f7",
+      "name": "crear_reserva",
+      "credentials": {
+        "supabaseApi": {
+          "id": "92BryzmZpeNbFhN9",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ver_disponibilidad": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_reserva": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "26b9572a-7fc0-45cf-845b-09f3dadbf21a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a40fa724b01c7b4220dfd5b162b16cced41462262014834dd8773fc3ce9de642"
+  },
+  "nodeGroups": [],
+  "id": "J2jfqKLH3OQxJRoe",
+  "tags": []
+}
