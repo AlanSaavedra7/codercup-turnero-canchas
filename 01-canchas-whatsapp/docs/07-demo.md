@@ -37,20 +37,24 @@ este orden, son 5 minutos.
 
 ## Cargar los datos de ejemplo
 
-Primero sincerá el canal de los turnos viejos:
+Pegá [`../db/seed-demo.sql`](../db/seed-demo.sql) en el SQL Editor de Supabase y
+corrilo. Hace tres cosas:
 
-```sql
-update reservas
-set cliente_telefono = 'chat-' || substr(md5(id::text), 1, 8), origen = 'chat'
-where cliente_telefono not like 'chat-%';
-```
+1. Sincera los turnos de prueba que quedaron con formato de teléfono real y el
+   panel mostraba como "WhatsApp"
+2. Carga 16 turnos repartidos del 22 al 27 de agosto, con más carga los fines de
+   semana y en la franja de 19 a 22
+3. Te muestra el resumen por día para verificar
 
-Después cargá 3 o 4 turnos para que la grilla se vea con vida. **Hacelo por el
-chat**, no por SQL: te cuesta unas 5 ejecuciones y de paso confirmás que todo el
-circuito funciona antes de presentar.
+No pisa nada de lo que ya exista: cada fila chequea solapamiento antes de
+entrar. Podés correrlo dos veces sin romper nada.
 
-Dejá **libre el horario que vas a reservar en vivo**. Si vas a pedir el sábado a
-las 20, que esa franja esté vacía.
+**El jueves 27 queda casi vacío a propósito.** Es el día del resultado, así que
+sirve para mostrar la grilla con lugar y para reservar en vivo sin pisar ningún
+turno.
+
+> Además de esto, hacé **una reserva de prueba por el chat** antes de presentar.
+> Cuesta unas 5 ejecuciones y confirma que todo el circuito funciona.
 
 ---
 

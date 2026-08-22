@@ -288,9 +288,24 @@ section { margin-bottom: var(--s5); }
 
 .dia-flecha { padding: 0; width: 44px; justify-content: center; }
 
+.dias-tira {
+  display: flex;
+  gap: var(--s2);
+  overflow-x: auto;
+  flex: 1;
+  /* Sin esto el item no baja de su ancho de contenido (min-width: auto es el
+     default en flex) y desborda el body en vez de scrollear adentro. */
+  min-width: 0;
+  scrollbar-width: none;
+}
+
+.dias-tira::-webkit-scrollbar { display: none; }
+
+.dias-tira .dia-btn { flex: 0 0 auto; }
+
 .dia-fecha {
-  margin-left: auto;
-  font-size: 14px;
+  margin: var(--s2) 0 0;
+  font-size: 13px;
   color: var(--fg-muted);
 }
 
@@ -572,7 +587,7 @@ section { margin-bottom: var(--s5); }
   .layout { padding: var(--s4) var(--s3) var(--s5); }
   .kpi { padding: var(--s3); }
   .kpi-valor { font-size: 24px; }
-  .dia-fecha { width: 100%; margin-left: 0; }
+
 }
 
 @media (prefers-reduced-motion: reduce) {

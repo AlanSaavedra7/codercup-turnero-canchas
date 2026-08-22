@@ -67,6 +67,17 @@ export function fechaLarga(fecha) {
   return texto.charAt(0).toUpperCase() + texto.slice(1);
 }
 
+/** "Hoy", "Mañana", "mié 26" — la etiqueta de un día en la tira del selector. */
+export function etiquetaDia(fecha, hoy) {
+  if (fecha === hoy) return 'Hoy';
+  if (fecha === sumarDias(hoy, 1)) return 'Mañana';
+  const d = new Date(`${fecha}T12:00:00Z`);
+  const dia = d
+    .toLocaleDateString('es-AR', { timeZone: 'UTC', weekday: 'short' })
+    .replace('.', '');
+  return `${dia} ${d.getUTCDate()}`;
+}
+
 export function diaCorto(iso) {
   return new Date(iso).toLocaleDateString('es-AR', {
     timeZone: TZ,

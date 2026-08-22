@@ -10,6 +10,7 @@ import {
   horaAR,
   diaCorto,
   fechaLarga,
+  etiquetaDia,
   hace,
 } from '../lib/datos';
 
@@ -103,6 +104,13 @@ export default async function Panel({ searchParams }) {
     );
   }
 
+  // Tira de accesos directos: la semana que arranca hoy. Las flechas siguen
+  // permitiendo ir a cualquier fecha más allá de estos siete días.
+  const dias = Array.from({ length: 7 }, (_, i) => {
+    const f = sumarDias(hoy, i);
+    return { fecha: f, etiqueta: etiquetaDia(f, hoy), actual: f === fecha };
+  });
+
   const { horas, pasoMin, desde } = construirGrilla(canchas);
 
   const baseMs = new Date(`${fecha}T00:00:00${OFFSET}`).getTime();
@@ -184,9 +192,7 @@ export default async function Panel({ searchParams }) {
       />
 
       <SelectorDia
-        fecha={fecha}
-        hoy={hoy}
-        manana={sumarDias(hoy, 1)}
+        dias={dias}
         anterior={sumarDias(fecha, -1)}
         siguiente={siguiente}
         etiqueta={fechaLarga(fecha)}

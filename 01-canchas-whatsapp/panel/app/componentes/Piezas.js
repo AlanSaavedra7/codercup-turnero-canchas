@@ -83,8 +83,7 @@ export function ResumenDia({ turnos, ingresos, libres, ocupacion }) {
    navegador funciona solo y la página se puede compartir.
 -------------------------------------------------------------------------- */
 
-export function SelectorDia({ fecha, hoy, manana, anterior, siguiente, etiqueta }) {
-  const es = (f) => (fecha === f ? 'page' : undefined);
+export function SelectorDia({ dias, anterior, siguiente, etiqueta }) {
   return (
     <section aria-label="Elegir día">
       <nav className="dias">
@@ -93,15 +92,27 @@ export function SelectorDia({ fecha, hoy, manana, anterior, siguiente, etiqueta 
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </a>
-        <a className="dia-btn" href={`/?fecha=${hoy}`} aria-current={es(hoy)}>Hoy</a>
-        <a className="dia-btn" href={`/?fecha=${manana}`} aria-current={es(manana)}>Mañana</a>
+
+        <div className="dias-tira">
+          {dias.map((d) => (
+            <a
+              key={d.fecha}
+              className="dia-btn"
+              href={`/?fecha=${d.fecha}`}
+              aria-current={d.actual ? 'page' : undefined}
+            >
+              {d.etiqueta}
+            </a>
+          ))}
+        </div>
+
         <a className="dia-btn dia-flecha" href={`/?fecha=${siguiente}`} aria-label="Día siguiente">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M9 18l6-6-6-6" />
           </svg>
         </a>
-        <span className="dia-fecha num">{etiqueta}</span>
       </nav>
+      <p className="dia-fecha num">{etiqueta}</p>
     </section>
   );
 }
