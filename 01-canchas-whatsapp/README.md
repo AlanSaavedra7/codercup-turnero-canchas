@@ -64,6 +64,7 @@ no JSON para pegar.
 4. [`docs/03-plan-de-entrega.md`](docs/03-plan-de-entrega.md) — el cronograma de hoy
 5. [`docs/04c-chat-publico.md`](docs/04c-chat-publico.md) — chat público (para que lo pruebe el jurado)
 6. [`docs/04b-whatsapp-twilio.md`](docs/04b-whatsapp-twilio.md) — conectar WhatsApp (Twilio)
-7. [`docs/05-panel-ia.md`](docs/05-panel-ia.md) — arquitectura de información del panel
-8. [`docs/06-panel.md`](docs/06-panel.md) — correr y publicar el panel
-9. [`docs/04-whatsapp.md`](docs/04-whatsapp.md) — conectar WhatsApp con Meta (trabado)
+7. [`docs/07-demo.md`](docs/07-demo.md) — guión de la presentación
+8. [`docs/05-panel-ia.md`](docs/05-panel-ia.md) — arquitectura de información del panel
+9. [`docs/06-panel.md`](docs/06-panel.md) — correr y publicar el panel
+10. [`docs/04-whatsapp.md`](docs/04-whatsapp.md) — conectar WhatsApp con Meta (trabado)
