@@ -1,5 +1,10 @@
 # 04b — WhatsApp con Twilio Sandbox (Bloque 4, ~20 min)
 
+> **DESCARTADO.** El trial de Twilio permite un solo destinatario activo por
+> vez, así que el jurado no podía probarlo. Se siguió con el chat público
+> ([`04c`](04c-chat-publico.md)). Queda como registro de lo evaluado.
+
+
 Camino alternativo al de Meta ([`04-whatsapp.md`](04-whatsapp.md)), para cuando
 el número de prueba de Meta no se destraba.
 

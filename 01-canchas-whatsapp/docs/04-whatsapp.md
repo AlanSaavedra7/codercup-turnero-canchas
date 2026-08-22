@@ -1,5 +1,10 @@
 # 04 — Conectar WhatsApp con Meta (Bloque 4, ~45 min)
 
+> **DESCARTADO.** El número de prueba de Meta nunca se pudo aprovisionar. Se
+> siguió con el chat público ([`04c`](04c-chat-publico.md)). Este documento
+> queda como registro de lo evaluado.
+
+
 Meta del bloque: que el agente que ya funciona atienda por WhatsApp de verdad.
 
 > **22/08/2026: este camino quedó trabado.** El botón "Solicitar número de

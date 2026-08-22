@@ -31,7 +31,7 @@ create table if not exists reservas (
   cliente_telefono text not null,
   estado           text not null default 'confirmada'
                      check (estado in ('confirmada','cancelada')),
-  origen           text not null default 'whatsapp',
+  origen           text not null default 'chat',
   creado_en        timestamptz not null default now(),
 
   constraint fin_despues_de_inicio check (fin > inicio),

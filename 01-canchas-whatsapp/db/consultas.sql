@@ -66,3 +66,19 @@ order by 3 desc;
 
 -- Empezar de cero (borra TODAS las reservas):
 -- truncate reservas restart identity;
+
+-- ---------------------------------------------------------------------------
+-- 6. Sincerar el canal de los turnos de prueba
+--
+-- Las reservas cargadas con el Manual Trigger quedaron con el telefono fijo
+-- 5491100000000, y el panel las muestra con el chip "WhatsApp" porque tiene
+-- formato de numero real. Nunca vinieron de WhatsApp: se crearon probando el
+-- agente. Esto las pasa al formato del chat web, que es lo que realmente son.
+-- ---------------------------------------------------------------------------
+update reservas
+set cliente_telefono = 'chat-' || substr(md5(id::text), 1, 8),
+    origen = 'chat'
+where cliente_telefono not like 'chat-%';
+
+-- Verificar:
+select id, cliente_nombre, cliente_telefono, origen from reservas order by id;

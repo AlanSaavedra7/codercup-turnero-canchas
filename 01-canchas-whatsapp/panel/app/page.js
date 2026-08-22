@@ -204,8 +204,8 @@ export default async function Panel({ searchParams }) {
       />
 
       <p className="pie">
-        Los turnos los toma un agente de IA por WhatsApp y chat web. Este panel es
-        de solo lectura. Probá el agente con el botón de chat, abajo a la derecha.
+        Los turnos los toma un agente de IA por chat. Este panel es de solo
+        lectura. Probalo con el botón de abajo a la derecha.
       </p>
 
       <ChatWidget />
