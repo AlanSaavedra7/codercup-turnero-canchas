@@ -1,4 +1,4 @@
-import { formatearPrecio } from '../../lib/datos';
+import { formatearPrecio, telefonoVisible } from '../../lib/datos';
 
 /* --------------------------------------------------------------------------
    Iconos. SVG inline, no emoji: los emoji cambian de forma según el sistema
@@ -222,7 +222,7 @@ export function ListaTurnos({ turnos, horaAR }) {
                   </td>
                   <td>
                     <div className="cliente">{t.cliente_nombre}</div>
-                    <div className="tel num">{t.cliente_telefono}</div>
+                    <div className="tel num">{telefonoVisible(t.cliente_telefono)}</div>
                   </td>
                   <td><ChipCanal telefono={t.cliente_telefono} /></td>
                   <td className="der num">{formatearPrecio(t.canchas?.precio_hora)}</td>

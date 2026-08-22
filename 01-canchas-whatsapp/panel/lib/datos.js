@@ -112,9 +112,13 @@ export function getReservasDelDia(fecha, siguiente) {
 
 /** Últimas reservas cargadas, para la sección de actividad del agente. */
 export function getActividad(limite = 8) {
+  // Se normaliza aunque hoy solo se llame con un literal: el valor se
+  // interpola en la query string, y basta con que mañana alguien lo conecte a
+  // un query param para que sea manipulable.
+  const n = Math.min(Math.max(Number.parseInt(limite, 10) || 8, 1), 50);
   return sb(
     `reservas?select=${CAMPOS}&estado=eq.confirmada` +
-      `&order=creado_en.desc&limit=${limite}`
+      `&order=creado_en.desc&limit=${n}`
   );
 }
 
@@ -142,6 +146,22 @@ export function hace(iso) {
   if (h < 24) return `hace ${h} h`;
   const d = Math.floor(h / 24);
   return d === 1 ? 'ayer' : `hace ${d} días`;
+}
+
+/**
+ * Teléfono para mostrar en pantalla.
+ *
+ * El panel es público y sin login: mostrar el número completo de cada cliente
+ * lo convierte en una lista de contactos para cualquiera que abra la URL. Se
+ * muestran solo los últimos 4 dígitos, que alcanzan para identificar el turno.
+ * En un despliegue real esto va detrás de autenticación y se muestra entero.
+ */
+export function telefonoVisible(tel) {
+  const t = String(tel ?? '').trim();
+  if (!t) return '—';
+  if (t.startsWith('chat-')) return t; // id de sesión web, no es un teléfono
+  const ultimos = t.slice(-4);
+  return ultimos.length === 4 ? `•••• ${ultimos}` : '••••';
 }
 
 export function formatearPrecio(n) {

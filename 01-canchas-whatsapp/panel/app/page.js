@@ -4,6 +4,7 @@ import {
   getActividad,
   getDisponibilidad,
   fechaValida,
+  telefonoVisible,
   hoyAR,
   sumarDias,
   horaAR,
@@ -81,17 +82,22 @@ export default async function Panel({ searchParams }) {
       getActividad(8),
     ]);
   } catch (e) {
+    // El detalle va al log del servidor, no a la pantalla: el cuerpo de un
+    // error de PostgREST expone nombres de tablas, columnas y constraints, y
+    // esta página es pública.
+    console.error('[panel] fallo al leer Supabase:', e);
+
+    const enDesarrollo = process.env.NODE_ENV !== 'production';
+
     return (
       <main className="layout">
         <div className="error">
-          <strong>No se pudo leer Supabase.</strong>
+          <strong>No se pudieron cargar los turnos.</strong>
           <p style={{ color: 'var(--fg-muted)', fontSize: 14 }}>
-            Revisá que <code style={{ display: 'inline', padding: 0 }}>.env.local</code> tenga
-            {' '}<code style={{ display: 'inline', padding: 0 }}>SUPABASE_URL</code> y{' '}
-            <code style={{ display: 'inline', padding: 0 }}>SUPABASE_SERVICE_KEY</code> con la
-            service_role key (no la anon).
+            Probá de nuevo en unos segundos. Si sigue igual, el detalle está en
+            el log del servidor.
           </p>
-          <code>{e.message}</code>
+          {enDesarrollo && <code>{e.message}</code>}
         </div>
       </main>
     );
@@ -130,7 +136,7 @@ export default async function Panel({ searchParams }) {
       return {
         estado: 'ocupado',
         texto: turno.cliente_nombre,
-        titulo: `${turno.cliente_nombre} · ${turno.cliente_telefono} · ${horaAR(turno.inicio)}–${horaAR(turno.fin)}`,
+        titulo: `${turno.cliente_nombre} · ${telefonoVisible(turno.cliente_telefono)} · ${horaAR(turno.inicio)}–${horaAR(turno.fin)}`,
       };
     }
 

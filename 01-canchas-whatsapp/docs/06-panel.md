@@ -203,6 +203,44 @@ una.
 - La columna fija de canchas lleva sombra propia, así al scrollear se lee como
   una capa por encima y no se confunde con el contenido
 
+### Seguridad
+
+Revisado antes de publicar. Lo que se resolvió y por qué:
+
+**Los teléfonos se muestran enmascarados** (`•••• 0000`). El panel es público y
+sin login: mostrar el número completo de cada cliente lo convierte en una lista
+de contactos para cualquiera que abra la URL. Los últimos 4 dígitos alcanzan
+para identificar el turno. En un despliegue real esto va detrás de
+autenticación y se muestra entero.
+
+**El mensaje de error es genérico en producción.** El cuerpo de un error de
+PostgREST trae nombres de tablas, columnas y constraints — un mapa gratis del
+esquema para quien fuerce un fallo. Ahora el detalle va a `console.error` del
+servidor y en pantalla solo aparece en desarrollo.
+
+**Cabeceras**: `X-Frame-Options: DENY` (nadie puede iframear el panel),
+`nosniff`, `Referrer-Policy` para no filtrar la URL con `?fecha=` a sitios
+externos, y `Permissions-Policy` cerrando cámara, micrófono y ubicación.
+`poweredByHeader: false` para no anunciar que corre Next.
+
+> **No hay CSP a propósito.** La burbuja de chat carga desde `*.app.n8n.cloud` y
+> una política mal calibrada la rompe en silencio. Para un panel de solo lectura
+> sin formularios, las cuatro cabeceras de arriba cubren lo que importa.
+
+**Pendiente, en n8n y no acá:** el Chat Trigger quedó con
+`Allowed Origins (CORS)` en `*`, lo que permite que cualquier sitio web maneje
+tu agente y cree reservas. Después del concurso acotalo al dominio de Vercel.
+
+### Lo que se verificó y estaba bien
+
+- **Sin XSS**: React escapa todo y no hay ningún `dangerouslySetInnerHTML`.
+  Aunque el agente escriba `<script>` en `cliente_nombre`, sale como texto.
+- **Sin SQL injection**: la fecha pasa por regex más round-trip y va con
+  `encodeURIComponent`; los parámetros del RPC los parametriza PostgREST.
+- **La service_role key no sale del servidor**: sin prefijo `NEXT_PUBLIC_`,
+  Next se niega a mandarla al cliente.
+- **RLS activo** en `canchas` y `reservas`, sin políticas.
+
 ### El scroll horizontal está adentro de la grilla
 
 Con 14 columnas de horarios, en un celular no entra. La regla es que el **body
