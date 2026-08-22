@@ -1,30 +1,32 @@
-# Turnero de canchas por WhatsApp (CoderCup)
+# Turnero de canchas — detalle técnico
 
-Bot de WhatsApp con un agente de IA que atiende a los clientes, consulta la
-disponibilidad real de las canchas, reserva el turno y lo guarda en una base de
-datos. El dueño de la cancha ve todo desde un panel web.
+La presentación del proyecto está en el [README de la raíz](../README.md).
+Este documento es el detalle de implementación.
+
+**En vivo:** [codercup-turnero-canchas.vercel.app](https://codercup-turnero-canchas.vercel.app/)
 
 ## Arquitectura
 
 ```
-Cliente (WhatsApp)
+Cliente (chat web público)
       |
       v
-[ WhatsApp Cloud API ]  --webhook-->  [ n8n ]
-      ^                                  |
-      |                                  |-- AI Agent (Gemini, gratis)
-      +-------- respuesta ---------------+     |
-                                               |-- Tool: ver_disponibilidad
-                                               |-- Tool: crear_reserva
-                                               |-- Tool: cancelar_reserva
-                                               |
-                                               v
-                                        [ Supabase / Postgres ]
-                                               ^
-                                               |
-                                        [ Panel web (Next.js) ]
-                                          -> Vercel
+[ Chat Trigger ] ──> [ Normalizar ] ──> [ AI Agent ] ──> respuesta al chat
+                                             │
+                          ┌──────────────────┼──────────────────┐
+                     Chat Model           Memory              Tools
+                      (Gemini)        (Simple Memory,      ├── ver_disponibilidad
+                                       por sesión)         └── crear_reserva
+                                                                    │
+                                                                    v
+                                                        [ Supabase / Postgres ]
+                                                                    ^
+                                                                    │
+                                                        [ Panel Next.js (Vercel) ]
 ```
+
+El agente tiene **dos** herramientas, no más: consultar disponibilidad y crear
+la reserva. Cancelar y reprogramar quedaron fuera de alcance a propósito.
 
 ## Stack (todo con capa gratuita)
 
