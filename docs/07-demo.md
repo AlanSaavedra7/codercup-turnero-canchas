@@ -14,10 +14,27 @@ este orden, son 5 minutos.
       *Publish*. Si está despublicado, la URL del chat da 404 y no hay demo.
       Verificalo abriendo el panel y mandando un mensaje por la burbuja.
 
-- [ ] **Queda cuota de Gemini.** Se resetea a medianoche del Pacífico, o sea
-      entre las 4 y 5 AM en Argentina. Si presentás a la tarde y probaste mucho
-      a la mañana, podés estar cerca del límite. El *Fallback Model* te cubre,
-      pero mejor saberlo.
+- [ ] **Está respondiendo Gemini y NO el fallback.** Esto es lo más importante
+      de la lista. Mandá un mensaje de prueba, abrí n8n → **Executions** y mirá
+      cuál de los dos modelos quedó en verde.
+
+      El fallback (Mistral) responde bastante peor: probado el 22/08, dijo que
+      no había canchas libres cuando sí las había, y le erró a la fecha de hoy
+      teniéndola escrita en el system message. Sirve para que el bot no muera
+      del todo si Gemini se cae en vivo, pero **no presentes corriendo sobre
+      él**.
+
+      La cuota diaria de Gemini se resetea a medianoche del Pacífico, o sea a
+      las **4 AM en Argentina**. Si probaste mucho el día anterior, esperá a que
+      pase esa hora.
+
+- [ ] **El agente sabe qué día es hoy.** Preguntale "¿qué fecha es hoy?" y
+      verificá que acierte. Todo el guión depende de que entienda "mañana".
+
+      > La zona horaria del workflow tiene que estar en
+      > `America/Argentina/Buenos_Aires` (n8n → `...` → Settings → Timezone).
+      > Con UTC, después de las 21:00 el agente cree que ya es el día
+      > siguiente.
 
 - [ ] **Mirá el contador de ejecuciones** arriba a la izquierda en n8n. Cada
       mensaje del chat gasta una de las 50.
