@@ -41,7 +41,7 @@ la reserva. Cancelar y reprogramar quedaron fuera de alcance a propósito.
 ## Entrega
 
 **23 de agosto de 2026.** El orden de trabajo y los recortes de alcance están en
-[`docs/03-plan-de-entrega.md`](docs/03-plan-de-entrega.md). Empezá por ahí.
+[`docs/03-plan-de-entrega.md`](03-plan-de-entrega.md). Empezá por ahí.
 
 ## Estado
 
@@ -58,13 +58,13 @@ la reserva. Cancelar y reprogramar quedaron fuera de alcance a propósito.
 Las guías están en `docs/` y son **paso a paso para que armes vos los nodos**,
 no JSON para pegar.
 
-1. [`docs/00-setup-n8n.md`](docs/00-setup-n8n.md) — levantar n8n
-2. [`docs/01-base-de-datos.md`](docs/01-base-de-datos.md) — Supabase y el esquema
-3. [`docs/02-workflow-n8n.md`](docs/02-workflow-n8n.md) — el agente, nodo por nodo
-4. [`docs/03-plan-de-entrega.md`](docs/03-plan-de-entrega.md) — el cronograma de hoy
-5. [`docs/04c-chat-publico.md`](docs/04c-chat-publico.md) — chat público (para que lo pruebe el jurado)
-6. [`docs/04b-whatsapp-twilio.md`](docs/04b-whatsapp-twilio.md) — conectar WhatsApp (Twilio)
-7. [`docs/07-demo.md`](docs/07-demo.md) — guión de la presentación
-8. [`docs/05-panel-ia.md`](docs/05-panel-ia.md) — arquitectura de información del panel
-9. [`docs/06-panel.md`](docs/06-panel.md) — correr y publicar el panel
-10. [`docs/04-whatsapp.md`](docs/04-whatsapp.md) — conectar WhatsApp con Meta (trabado)
+1. [`docs/00-setup-n8n.md`](00-setup-n8n.md) — levantar n8n
+2. [`docs/01-base-de-datos.md`](01-base-de-datos.md) — Supabase y el esquema
+3. [`docs/02-workflow-n8n.md`](02-workflow-n8n.md) — el agente, nodo por nodo
+4. [`docs/03-plan-de-entrega.md`](03-plan-de-entrega.md) — el cronograma de hoy
+5. [`docs/04c-chat-publico.md`](04c-chat-publico.md) — chat público (para que lo pruebe el jurado)
+6. [`docs/04b-whatsapp-twilio.md`](04b-whatsapp-twilio.md) — conectar WhatsApp (Twilio)
+7. [`docs/07-demo.md`](07-demo.md) — guión de la presentación
+8. [`docs/05-panel-ia.md`](05-panel-ia.md) — arquitectura de información del panel
+9. [`docs/06-panel.md`](06-panel.md) — correr y publicar el panel
+10. [`docs/04-whatsapp.md`](04-whatsapp.md) — conectar WhatsApp con Meta (trabado)

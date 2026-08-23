@@ -4,7 +4,7 @@
     {
       "name": "panel-canchas",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["--prefix", "01-canchas-whatsapp/panel", "run", "dev"],
+      "runtimeArgs": ["--prefix", "panel", "run", "dev"],
       "port": 3000
     }
   ]

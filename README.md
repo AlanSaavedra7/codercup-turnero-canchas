@@ -120,14 +120,13 @@ de envío.
 ## Estructura
 
 ```
-01-canchas-whatsapp/
-├── db/        Esquema, migraciones y consultas de Postgres
-├── docs/      Guías paso a paso para rearmar todo desde cero
-├── n8n/       Backup del workflow exportado
-└── panel/     El panel en Next.js
+├── db/      Esquema, migraciones y consultas de Postgres
+├── docs/    Guías paso a paso para rearmar todo desde cero
+├── n8n/     Backup del workflow exportado
+└── panel/   El panel en Next.js
 ```
 
-Las guías de [`docs/`](01-canchas-whatsapp/docs/) están escritas para armar los
+Las guías de [`docs/`](docs/) están escritas para armar los
 nodos de n8n **a mano**, campo por campo. No son un JSON para importar: la idea
 era aprender la herramienta, no copiarla.
 
@@ -139,14 +138,14 @@ herramienta llamados `parameters0_Value` que el agente completaba a ciegas.
 ## Correrlo
 
 ```bash
-cd 01-canchas-whatsapp/panel
+cd panel
 cp .env.local.example .env.local   # completar con tus datos de Supabase
 npm install
 npm run dev
 ```
 
-El esquema de la base está en [`db/schema.sql`](01-canchas-whatsapp/db/schema.sql).
-El detalle de cada paso, en [`docs/`](01-canchas-whatsapp/docs/).
+El esquema de la base está en [`db/schema.sql`](db/schema.sql).
+El detalle de cada paso, en [`docs/`](docs/).
 
 ---
 

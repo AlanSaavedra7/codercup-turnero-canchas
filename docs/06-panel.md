@@ -101,7 +101,7 @@ Creá un repo en GitHub y subilo. Después:
 
 1. [vercel.com](https://vercel.com) → entrá con GitHub → **Add New** → **Project**
 2. Importá el repo
-3. **Root Directory**: `01-canchas-whatsapp/panel` ← importante, no la raíz
+3. **Root Directory**: `panel` ← importante, no la raíz del repo
 4. **Environment Variables**: cargá `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` y
    `NEXT_PUBLIC_N8N_CHAT_URL`
 5. **Deploy**
