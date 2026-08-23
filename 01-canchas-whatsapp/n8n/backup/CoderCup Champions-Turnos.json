@@ -2,36 +2,25 @@
   "name": "CoderCup Champions-Turnos",
   "nodes": [
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        0,
-        0
-      ],
-      "id": "c35d06c8-9dca-4444-b376-273702dfc430",
-      "name": "When clicking ‘Execute workflow’"
-    },
-    {
       "parameters": {
         "assignments": {
           "assignments": [
             {
               "id": "5f24b926-8e4e-4cd3-9183-d8fd346df344",
               "name": "telefono",
-              "value": "5491100000000",
+              "value": "=chat-{{ $json.sessionId.slice(0, 8) }}",
               "type": "string"
             },
             {
               "id": "b4f8c8fd-182d-4381-868b-f34c2a1e0750",
               "name": "nombre",
-              "value": "Alan",
+              "value": "Cliente web",
               "type": "string"
             },
             {
               "id": "7612a785-63ca-47a8-8ebd-c12d7c222ca7",
               "name": "texto",
-              "value": "Si, confirmo",
+              "value": "={{ $json.chatInput }}",
               "type": "string"
             }
           ]
@@ -51,6 +40,7 @@
       "parameters": {
         "promptType": "define",
         "text": "={{ $json.texto }}",
+        "needsFallback": true,
         "options": {
           "systemMessage": "=Sos el asistente de reservas del complejo de canchas \"CoderCup Champions\". Atendes clientes por WhatsApp.\n\nCONTEXTO\n- Ahora es {{ $now.setZone('America/Argentina/Buenos_Aires').toFormat(\"cccc dd/MM/yyyy HH:mm\") }}. Usalo para resolver \"hoy\", \"manana\", \"el sabado\", \"el finde\".\n- El telefono del cliente es {{ $json.telefono }}. Ya lo tenes, no lo preguntes.\n- En WhatsApp figura como {{ $json.nombre }}, pero puede estar reservando para otro: confirma a nombre de quien va el turno.\n- El complejo abre de 09:00 a 23:00 y todos los turnos duran 1 hora.\n\nQUE OFRECES\n- Hay canchas de futbol 5 y de futbol 7, con precios distintos.\n- ver_disponibilidad te devuelve, para una fecha, cada turno libre con su cancha, deporte, hora y precio.\n- Podes filtrar por tipo pasandole p_deporte con \"futbol 5\" o \"futbol 7\".\n\nCOMO HABLAS\n- Espanol rioplatense, cordial y breve. Es WhatsApp: mensajes cortos, sin parrafos largos.\n- Maximo 5 horarios por mensaje. Si hay mas, decilo y ofrece mostrar el resto.\n- Cuando listes horarios, aclara de que tipo de futbol es cada cancha.\n\nQUE NECESITAS PARA RESERVAR\nAntes de llamar a crear_reserva tenes que tener los cuatro datos:\n1. Tipo de futbol (5 o 7)\n2. Fecha\n3. Hora\n4. Nombre de quien reserva\n\nSi falta alguno, preguntalo. Preguntá de a una cosa por vez, no tires una lista de preguntas.\n\nExcepciones, para no hacerlo pesado:\n- Si el cliente ya dijo el tipo, no lo vuelvas a preguntar. Deducilo si es obvio: 10 jugadores es futbol 5, 14 es futbol 7.\n- Si para ese horario queda una sola cancha libre, ofrecesela directamente en vez de preguntar el tipo.\n\nREGLAS QUE NO SE ROMPEN\n- NUNCA inventes disponibilidad, precios ni tipos de cancha. Todo sale de ver_disponibilidad.\n- Volve a consultar ver_disponibilidad cada vez que el cliente cambie de fecha, de horario o de tipo de futbol. No contestes de memoria.\n- Antes de llamar a crear_reserva repetile cancha, tipo de futbol, dia, hora y precio, y espera que confirme.\n- crear_reserva necesita el cancha_id exacto que devolvio ver_disponibilidad. No lo adivines.\n- Si el horario que pide esta ocupado, decilo y ofrece los dos o tres mas cercanos del mismo tipo de futbol.\n- Si crear_reserva devuelve error, ese turno se acaba de ocupar: avisale, volve a consultar disponibilidad y ofrecele otro. No reintentes lo mismo.\n- Si te preguntan algo que no sea sobre turnos, responde amablemente que solo manejas reservas de canchas.",
           "maxIterations": 5
@@ -67,34 +57,14 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-3.6-flash",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1.1,
-      "position": [
-        208,
-        304
-      ],
-      "id": "94adff6e-967a-4b10-87ec-a71c7534369a",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "OZ55JdTNweQK4f39",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "sessionIdType": "customKey",
         "sessionKey": "={{ $('Normalizar').item.json.telefono }}"
       },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.4,
       "position": [
-        384,
-        304
+        512,
+        272
       ],
       "id": "78293588-aa09-49fb-b1ad-bba1bff6d6e4",
       "name": "Simple Memory"
@@ -111,11 +81,11 @@
           "parameters": [
             {
               "name": "p_fecha",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+              "value": "={{ $fromAI('p_fecha', 'Fecha a consultar en formato YYYY-MM-DD', 'string') }}"
             },
             {
               "name": "p_deporte",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+              "value": "=\t{{ $fromAI('p_deporte', 'Tipo de cancha: futbol 5 o futbol 7. Dejar vacio para ver todas', 'string') }}"
             }
           ]
         },
@@ -124,8 +94,8 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.5,
       "position": [
-        544,
-        304
+        640,
+        288
       ],
       "id": "4d589017-bec0-403c-b1cc-773f2194ee26",
       "name": "ver_disponibilidad",
@@ -157,19 +127,19 @@
           "parameters": [
             {
               "name": "cancha_id",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+              "value": "=\t{{ $fromAI('cancha_id', 'El id numerico de la cancha, exactamente como lo devolvio ver_disponibilidad', 'number') }}"
             },
             {
               "name": "inicio",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', ``, 'string') }}"
+              "value": "={{ $fromAI('inicio', 'Inicio del turno en ISO 8601 con zona -03:00, por ejemplo 2026-08-23T20:00:00-03:00', 'string') }}"
             },
             {
               "name": "fin",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', ``, 'string') }}"
+              "value": "={{ $fromAI('fin', 'Fin del turno, una hora despues del inicio, mismo formato', 'string') }}"
             },
             {
               "name": "cliente_nombre",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', ``, 'string') }}"
+              "value": "={{ $fromAI('cliente_nombre', 'Nombre de la persona a nombre de quien va la reserva', 'string') }}"
             },
             {
               "name": "cliente_telefono",
@@ -182,8 +152,8 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.5,
       "position": [
-        704,
-        304
+        784,
+        288
       ],
       "id": "c0189e8d-d3da-456c-b0a2-75312b22c2f7",
       "name": "crear_reserva",
@@ -193,38 +163,77 @@
           "name": "Supabase account"
         }
       }
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "¡Hola! Soy el asistente de CoderCup Champions ⚽\nDecime qué día y a qué hora buscás cancha y te digo qué tenemos libre.",
+        "options": {
+          "allowedOrigins": "https://codercup-turnero-canchas.vercel.app/",
+          "subtitle": "Reservá tu cancha",
+          "title": "CoderCup Champions",
+          "responseMode": "lastNode"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        48,
+        0
+      ],
+      "id": "90140709-4791-4f60-9c0f-66c060b1ccd2",
+      "name": "When chat message received",
+      "webhookId": "1b84cf69-aa88-41bb-af49-f4866e68465c"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        272
+      ],
+      "id": "73546999-9557-4f65-bce8-05f88d458c12",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OZ55JdTNweQK4f39",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "mistral-small-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [
+        352,
+        272
+      ],
+      "id": "db6be368-eee6-4891-91d7-95ed5bb59fec",
+      "name": "Mistral Cloud Chat Model",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "xHoVUhtVQh7NJGmo",
+          "name": "Mistral Cloud account"
+        }
+      }
     }
   ],
   "pinData": {},
   "connections": {
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Normalizar",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Normalizar": {
       "main": [
         [
           {
             "node": "AI Agent",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -262,14 +271,47 @@
           }
         ]
       ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Normalizar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mistral Cloud Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "26b9572a-7fc0-45cf-845b-09f3dadbf21a",
+  "versionId": "2311c3e7-6e8e-4bf1-baad-b0d293412e48",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a40fa724b01c7b4220dfd5b162b16cced41462262014834dd8773fc3ce9de642"
